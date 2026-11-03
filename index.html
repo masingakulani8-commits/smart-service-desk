@@ -2066,6 +2066,35 @@ tbody tr{transition:background .12s ease}
 <div class="toast" id="toast"></div>
 
 <script>
+/* v251203 boot: open IndexedDB, read the saved desk, then start the app */
+window.__SSD_IDB_BOOT=null;
+window.__ssdStart=null;
+(function(){
+  var started=false;
+  function go(){if(started)return;started=true;var s=document.getElementById('ssdMain');var n=document.createElement('script');n.text=s.textContent;document.body.appendChild(n)}
+  window.__ssdGo=go;
+  try{
+    var rq=indexedDB.open('ssd_desk',1);
+    rq.onupgradeneeded=function(){rq.result.createObjectStore('kv')};
+    rq.onerror=function(){go()};
+    rq.onblocked=function(){go()};
+    rq.onsuccess=function(){
+      var db=rq.result;
+      try{
+        var g=db.transaction('kv','readonly').objectStore('kv').get('ssd_db_v5');
+        g.onsuccess=function(){
+          window.__SSD_IDB_BOOT=g.result||null;
+          go();
+          if(window.__ssdIdbAttach)window.__ssdIdbAttach(db);
+        };
+        g.onerror=function(){go();if(window.__ssdIdbAttach)window.__ssdIdbAttach(db)};
+      }catch(e){go()}
+    };
+    setTimeout(go,6000);
+  }catch(e){go()}
+})();
+</script>
+<script type="text/plain" id="ssdMain">
 'use strict';
 /* ---------- boot guard: never a blank page ----------
    If anything throws before the desk finishes starting, show a clear
@@ -2232,7 +2261,33 @@ function priFullLabels(){return ['P1','P2','P3','P4'].map(priFull)}
 /* =========================================================================
    [INTEGRATION POINT] ApiStore - swap localStorage for a REST backend
    ========================================================================= */
-const ApiStore={load(){try{return JSON.parse(localStorage.getItem('ssd_db_v5'))}catch(e){return null}},save(db){try{localStorage.setItem('ssd_db_v5',JSON.stringify(db))}catch(e){toast('Storage limit reached. Attachments kept for this session only.',1)}}};
+/* v251203: the desk holds thousands of tickets (13MB+), far past the ~5MB localStorage cap, so saves silently failed and calls vanished on reload now that central sync is off. The database now lives in IndexedDB (GBs of room). localStorage is only a legacy fallback/reader. */
+const ApiStore=(function(){
+  const IDB={db:null,pending:null,busy:false,mem:window.__SSD_IDB_BOOT||null};
+  function put(json){
+    if(!IDB.db){IDB.pending=json;return}
+    if(IDB.busy){IDB.pending=json;return}
+    IDB.busy=true;
+    try{
+      const tx=IDB.db.transaction('kv','readwrite');
+      tx.objectStore('kv').put(json,'ssd_db_v5');
+      const done=function(){IDB.busy=false;if(IDB.pending){const p=IDB.pending;IDB.pending=null;put(p)}};
+      tx.oncomplete=done;tx.onerror=function(){IDB.busy=false;try{toast('Could not save to browser storage.',1)}catch(e){}};tx.onabort=tx.onerror;
+    }catch(e){IDB.busy=false}
+  }
+  window.__ssdIdbAttach=function(db){IDB.db=db;if(IDB.pending){const p=IDB.pending;IDB.pending=null;put(p)}};
+  return {
+    load(){
+      if(IDB.mem){try{return JSON.parse(IDB.mem)}catch(e){}}
+      try{return JSON.parse(localStorage.getItem('ssd_db_v5'))}catch(e){return null}
+    },
+    save(db){
+      let json;try{json=JSON.stringify(db)}catch(e){return}
+      put(json);
+      try{localStorage.removeItem('ssd_db_v5')}catch(e){}
+    }
+  };
+})();
 let DB=null,SESSION=null,STATE={view:'dashboard',q:'',sort:(function(){try{const sv=JSON.parse(localStorage.getItem('ssd_state_v1'));return sv&&sv.sort?sv.sort:'-created'}catch(e){return'-created'}})(),page:1,ctx:null,qf:{}};
 let CMP_OPEN=false,COL_MENU=false,COL_DRAG=null,COLS=[],COL_HIDDEN=[],COLW={},DASH=null,DASH_EDIT=false,DASH_DRAG=null,UNDO_STACK=[],THEME='light',LAST_VIEW=null,TICKS=null;let SEL=new Set(); /* tickets ticked on the list for bulk actions */
 /* ========== USER SETTINGS LOCKED TO THE LOGIN (P56) ==========
