@@ -2152,7 +2152,7 @@ tbody tr{transition:background .12s ease}
     <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="password" autocomplete="current-password"></div>
     <button class="btn-login" onclick="doLogin()">Sign in</button>
     <div class="mock-note"><b>Confidential.</b> Authorised staff only. Access is covered by the Non-Disclosure Agreement you accepted. Ask your administrator for your sign-in details.<span id="demoEmails" style="display:none"></span></div>
-    <div class="login-foot">CONFIDENTIAL · PROPRIETARY · AUTHORISED STAFF ONLY · COVERED BY NDA · BUILD v251206</div>
+    <div class="login-foot">CONFIDENTIAL · PROPRIETARY · AUTHORISED STAFF ONLY · COVERED BY NDA · BUILD v251207</div>
   </div>
 </div>
 
@@ -3195,6 +3195,16 @@ function load(){DB=ApiStore.load();
     if(!DB.users.some(u=>u&&u.email&&u.pass)){DB.users=SEED.users;healed.push('users(unusable)')}
     if(healed.length){DB.__healed=(DB.__healed||[]).concat([{at:new Date().toISOString(),parts:healed}]).slice(-5);save()}
   }catch(eh){}
+  /* v251207: test user (Agent role) added once to every desk, new or already saved */
+  try{
+    if(!DB.__testUserV){
+      if(!DB.users.some(u=>(u.email||'').toLowerCase()==='test.agent@netflow.co.za')){
+        DB.users.push({id:'u_test1',name:'Test Agent',email:'test.agent@netflow.co.za',role:'Agent',pass:'test1234',active:true});
+      }
+      if(!DB.config.seatLimit||Number(DB.config.seatLimit)<=20)DB.config.seatLimit=25;
+      DB.__testUserV=1;save();
+    }
+  }catch(et){}
   if(!Array.isArray(DB.tickets))DB.tickets=[];
   if(!Array.isArray(DB.users))DB.users=[];
   DB.config=Object.assign({},DEFAULT_CONFIG,DB.config||{});if(!DB.clients){DB.clients=defaultClients();save()}if(!DB.autoAlerts){DB.autoAlerts=[];save()}if(!DB.broadcasts){DB.broadcasts=[];DB.ack=DB.ack||{};DB.flcAck=DB.flcAck||{};save()}
