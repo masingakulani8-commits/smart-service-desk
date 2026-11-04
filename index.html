@@ -2025,7 +2025,8 @@ tbody tr{transition:background .12s ease}
    is prohibited and is a breach of the Non-Disclosure Agreement accepted at the entrance. */
 (function(){
   var VER='1.0', KEY='ssd_nda_v1';
-  function rec(){try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}}
+  var MEM=null;
+  function rec(){try{var r=JSON.parse(localStorage.getItem(KEY));if(r)return r}catch(e){}return MEM}
   function ok(){var r=rec();return !!(r&&r.ver===VER&&r.name&&r.accepted)}
   window.__ndaOk=ok;
   function logAll(r){try{var a=JSON.parse(localStorage.getItem(KEY+'_log')||'[]');a.push(r);localStorage.setItem(KEY+'_log',JSON.stringify(a.slice(-500)))}catch(e){}}
@@ -2054,7 +2055,7 @@ tbody tr{transition:background .12s ease}
       if(c.length<2){e.textContent='Enter your company or organisation.';return}
       if(!k){e.textContent='Tick the box to confirm you agree.';return}
       var r={ver:VER,name:n,company:c,accepted:true,at:new Date().toISOString(),tz:(Intl.DateTimeFormat().resolvedOptions().timeZone||''),ua:navigator.userAgent.slice(0,180),screen:screen.width+'x'+screen.height,lang:navigator.language,page:location.href.split('#')[0]};
-      try{localStorage.setItem(KEY,JSON.stringify(r))}catch(x){}
+      MEM=r;try{localStorage.setItem(KEY,JSON.stringify(r))}catch(x){}
       logAll(r);hide();
       var em=document.getElementById('loginEmail');if(em)try{em.focus()}catch(x){}
     };
@@ -2103,7 +2104,7 @@ tbody tr{transition:background .12s ease}
     <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="password" autocomplete="current-password"></div>
     <button class="btn-login" onclick="doLogin()">Sign in</button>
     <div class="mock-note"><b>Confidential.</b> Authorised staff only. Access is covered by the Non-Disclosure Agreement you accepted. Ask your administrator for your sign-in details.<span id="demoEmails" style="display:none"></span></div>
-    <div class="login-foot">CONFIDENTIAL · PROPRIETARY · AUTHORISED STAFF ONLY · COVERED BY NDA · BUILD v251204</div>
+    <div class="login-foot">CONFIDENTIAL · PROPRIETARY · AUTHORISED STAFF ONLY · COVERED BY NDA · BUILD v251205</div>
   </div>
 </div>
 
@@ -2160,32 +2161,60 @@ tbody tr{transition:background .12s ease}
 <div class="toast" id="toast"></div>
 
 <script>
-/* v251203 boot: open IndexedDB, read the saved desk, then start the app */
-window.__SSD_IDB_BOOT=null;
-window.__ssdStart=null;
+/* v251205 start-up guard: if the desk fails to start, say so and offer a one-click local reset instead of a dead sign-in. */
 (function(){
-  var started=false;
-  function go(){if(started)return;started=true;var s=document.getElementById('ssdMain');var n=document.createElement('script');n.text=s.textContent;document.body.appendChild(n)}
-  window.__ssdGo=go;
+  var shown=false;
+  function box(msg){
+    if(shown)return;shown=true;
+    function put(){
+      var g=document.createElement('div');
+      g.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:100000;background:#7a1c14;color:#fff;padding:12px 16px;font:13px/1.45 system-ui,sans-serif;display:flex;gap:12px;align-items:center;flex-wrap:wrap';
+      g.innerHTML='<span style="flex:1;min-width:220px"><b>The desk could not start on this browser.</b> Saved data on this device looks damaged ('+String(msg).replace(/[<>&]/g,'').slice(0,120)+'). Resetting clears only this browser\'s local copy and does not affect anyone else.</span>';
+      var b=document.createElement('button');b.textContent='Reset this browser and reload';
+      b.style.cssText='padding:9px 16px;border:0;border-radius:8px;background:#fff;color:#7a1c14;font-weight:800;cursor:pointer';
+      b.onclick=function(){
+        try{var keep={};['ssd_nda_v1','ssd_nda_v1_log'].forEach(function(k){keep[k]=localStorage.getItem(k)});localStorage.clear();Object.keys(keep).forEach(function(k){if(keep[k]!=null)localStorage.setItem(k,keep[k])})}catch(e){}
+        try{indexedDB.deleteDatabase('ssd_desk')}catch(e){}
+        setTimeout(function(){location.reload()},500);
+      };
+      g.appendChild(b);document.body.appendChild(g);
+    }
+    if(document.body)put();else document.addEventListener('DOMContentLoaded',put);
+  }
+  window.addEventListener('error',function(e){try{var ap=document.getElementById('app');if(!(ap&&ap.classList.contains('on'))&&e&&e.message&&!/ResizeObserver|Script error/.test(e.message))box(e.message)}catch(x){}});
+  setTimeout(function(){try{if(typeof DB==='undefined'||!DB||!DB.users)box('desk data did not load')}catch(x){box('desk data did not load')}},9000);
+})();
+</script>
+<script>
+/* v251203/5 boot: open IndexedDB, read the saved desk, then start the app. Never blocks: if storage is unavailable or slow the desk still starts. */
+window.__SSD_IDB_BOOT=null;
+(function(){
+  var started=false,domReady=false,idbDone=false;
+  function tryStart(){
+    if(started||!domReady||!idbDone)return;
+    started=true;
+    var s=document.getElementById('ssdMain');var n=document.createElement('script');n.text=s.textContent;document.body.appendChild(n);
+    if(window.__pendingDb&&window.__ssdIdbAttach)window.__ssdIdbAttach(window.__pendingDb);
+  }
+  function idbFinished(){idbDone=true;tryStart()}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){domReady=true;tryStart()});else domReady=true;
   try{
-    var rq=indexedDB.open('ssd_desk',1);
-    rq.onupgradeneeded=function(){rq.result.createObjectStore('kv')};
-    rq.onerror=function(){go()};
-    rq.onblocked=function(){go()};
-    rq.onsuccess=function(){
-      var db=rq.result;
-      try{
-        var g=db.transaction('kv','readonly').objectStore('kv').get('ssd_db_v5');
-        g.onsuccess=function(){
-          window.__SSD_IDB_BOOT=g.result||null;
-          go();
-          if(window.__ssdIdbAttach)window.__ssdIdbAttach(db);
-        };
-        g.onerror=function(){go();if(window.__ssdIdbAttach)window.__ssdIdbAttach(db)};
-      }catch(e){go()}
-    };
-    setTimeout(go,6000);
-  }catch(e){go()}
+    if(!window.indexedDB){idbFinished()}
+    else{
+      var rq=indexedDB.open('ssd_desk',1);
+      rq.onupgradeneeded=function(){try{rq.result.createObjectStore('kv')}catch(e){}};
+      rq.onerror=idbFinished;rq.onblocked=idbFinished;
+      rq.onsuccess=function(){
+        var db=rq.result;
+        try{
+          var g=db.transaction('kv','readonly').objectStore('kv').get('ssd_db_v5');
+          g.onsuccess=function(){window.__SSD_IDB_BOOT=g.result||null;window.__pendingDb=db;idbFinished()};
+          g.onerror=function(){window.__pendingDb=db;idbFinished()};
+        }catch(e){idbFinished()}
+      };
+      setTimeout(idbFinished,5000);
+    }
+  }catch(e){idbFinished()}
 })();
 </script>
 <script type="text/plain" id="ssdMain">
@@ -2379,6 +2408,10 @@ const ApiStore=(function(){
       let json;try{json=JSON.stringify(db)}catch(e){return}
       put(json);
       try{localStorage.removeItem('ssd_db_v5')}catch(e){}
+      if(!IDB.db&&!window.__memWarn){
+        /* storage is blocked in this browser (private mode / in-app browser): the desk still works for this visit, but nothing can be remembered */
+        window.__memWarn=setTimeout(function(){if(!IDB.db){try{toast('This browser blocks storage, so calls will not be remembered after you close the page. Open the desk in Chrome, Edge or Safari (not private mode).',1)}catch(e){}}},4000);
+      }
     }
   };
 })();
@@ -3102,6 +3135,18 @@ function load(){DB=ApiStore.load();
     DB=null;
   }
   if(!DB){DB=seedDB();DB.config.syncOn=false;DB.__freshSeed=1;save()}
+  /* v251205 self-heal: a saved desk from an older/half-written save can lack whole collections (providers, shifts...) and crash start-up, leaving the login dead. Restore any missing or wrongly-typed top-level part from a fresh seed, keep everything else. */
+  try{
+    const SEED=seedDB();let healed=[];
+    Object.keys(SEED).forEach(k=>{
+      const want=SEED[k],have=DB[k];
+      const bad=have===undefined||have===null||(Array.isArray(want)!==Array.isArray(have))||(typeof want!==typeof have);
+      if(bad){DB[k]=want;healed.push(k)}
+    });
+    if(!DB.users.length){DB.users=SEED.users;healed.push('users(empty)')}
+    if(!DB.users.some(u=>u&&u.email&&u.pass)){DB.users=SEED.users;healed.push('users(unusable)')}
+    if(healed.length){DB.__healed=(DB.__healed||[]).concat([{at:new Date().toISOString(),parts:healed}]).slice(-5);save()}
+  }catch(eh){}
   if(!Array.isArray(DB.tickets))DB.tickets=[];
   if(!Array.isArray(DB.users))DB.users=[];
   DB.config=Object.assign({},DEFAULT_CONFIG,DB.config||{});if(!DB.clients){DB.clients=defaultClients();save()}if(!DB.autoAlerts){DB.autoAlerts=[];save()}if(!DB.broadcasts){DB.broadcasts=[];DB.ack=DB.ack||{};DB.flcAck=DB.flcAck||{};save()}
@@ -3512,8 +3557,8 @@ function doLogin(){
   const p=document.getElementById('loginPass').value;
   if(!em||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){toast('Enter your email address to sign in.',1);return}
   const u=DB.users.find(x=>(x.email||'').toLowerCase()===em);
-  if(!u||!u.active){toast('No active agent account with that email address.',1);return}
-  if(p!==u.pass){toast('Incorrect password for '+u.email+'.',1);return}
+  if(!u||!u.active){toast('No active agent account with that email address. Use your full work email, for example name@netflow.co.za.',1);return}
+  if(p!==u.pass){toast('Incorrect password for '+u.email+'. Ask your administrator for your password.',1);return}
   startSession(u,false);
 }
 
