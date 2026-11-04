@@ -1980,6 +1980,100 @@ tbody tr{transition:background .12s ease}
 </style>
 </head>
 <body>
+<div id="ndaGate" style="position:fixed;inset:0;z-index:99999;background:#0b1a2c;display:none;align-items:center;justify-content:center;padding:16px;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+ <div style="background:#fff;color:#14263b;width:760px;max-width:100%;max-height:96vh;border-radius:18px;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,.55);overflow:hidden">
+  <div style="padding:20px 26px 14px;border-bottom:1px solid #dbe5ee;background:linear-gradient(135deg,#122640,#2e5f7f);color:#fff">
+   <div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;opacity:.8">Confidential &middot; Restricted access</div>
+   <div style="font-size:21px;font-weight:800;margin-top:4px">Non-Disclosure &amp; Confidentiality Agreement</div>
+   <div style="font-size:12.5px;opacity:.85;margin-top:3px">Smart Service Desk &middot; you must read and accept this agreement before the system will open</div>
+  </div>
+  <div id="ndaText" style="padding:18px 26px;overflow:auto;font-size:13px;line-height:1.65;flex:1;min-height:120px">
+   <p><b>1. Parties.</b> This agreement is between the owner and developer of the Smart Service Desk (the &ldquo;Owner&rdquo;) and the person accessing it (the &ldquo;Recipient&rdquo;), who signs it personally and, where applicable, on behalf of the company or organisation they represent.</p>
+   <p><b>2. Confidential Information.</b> Everything you see, open or use in the Smart Service Desk is confidential. This includes, without limit: the software, source code, page structure, design, layout, workflows, features, screens, reports, SLA and escalation logic, scoring and clustering methods, data models, integrations, the Operations Pack, remote-viewer and bridge designs, documentation, demo data, store and estate information, ticket and call content, provider and supplier details, pricing, and any idea, method or know-how revealed through the system. It applies whether you saw it in the browser, in screenshots or recordings, in the page source, or were told about it.</p>
+   <p><b>3. Permitted use.</b> You may use the system only for the evaluation or business purpose for which the Owner gave you access, and only yourself.</p>
+   <p><b>4. What you must not do.</b> You must not: (a) copy, save, download, scrape, mirror, host, republish or redistribute the system or any part of it; (b) view, extract, decompile, reverse engineer or analyse the source code, scripts, styles or data in order to reproduce it; (c) build, commission or assist any product, service, tender, proposal or competing system that copies or is derived from its features, workflows, screens or ideas; (d) take screenshots, screen recordings or photographs, or describe the system, for anyone outside your own authorised team; (e) share links, logins or access with any other person; (f) remove or alter any confidentiality, copyright or ownership notice; (g) use any information in it to compete with the Owner or to solicit the Owner&rsquo;s clients.</p>
+   <p><b>5. Ownership.</b> All rights, title and interest, including copyright, design rights and trade secrets, remain with the Owner. Nothing here grants you a licence, ownership, or any right to copy or reuse the system or its ideas. Access is a limited, revocable, personal permission.</p>
+   <p><b>6. Care.</b> You must protect the Confidential Information with at least the care you give your own most sensitive information, and tell the Owner immediately if you know or suspect it has been copied, leaked or misused.</p>
+   <p><b>7. Exceptions.</b> This agreement does not cover information that is already public through no fault of yours, or that you must disclose by law or court order (and then only after giving the Owner prompt written notice, where lawful).</p>
+   <p><b>8. Duration.</b> Your duties start when you accept and continue for five (5) years from your last access. For source code, trade secrets and personal information they continue for as long as that information stays confidential.</p>
+   <p><b>9. Remedies.</b> You accept that a breach may cause damage that money cannot repair. The Owner may apply for an interdict or other urgent relief without having to prove actual loss, and may also claim damages, the costs of enforcement on the attorney-and-own-client scale, and any profit you made from the misuse. You are responsible for any breach by anyone you gave access to.</p>
+   <p><b>10. Records and monitoring.</b> You agree that your acceptance (your name, company, email if entered, the date and time, the agreement version and basic browser details) is recorded as proof of this agreement, and that your use of the system may be logged.</p>
+   <p><b>11. Law.</b> This agreement is governed by the laws of the Republic of South Africa. You consent to the jurisdiction of the High Court of South Africa. Typing your name and accepting below is your electronic signature and is binding under the Electronic Communications and Transactions Act, 25 of 2002.</p>
+   <p style="font-size:11.5px;color:#5a6f84">Agreement version 1.0. If you do not agree, close this page now and do not use the system.</p>
+  </div>
+  <div style="padding:14px 26px 18px;border-top:1px solid #dbe5ee;background:#f4f8fb">
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <label style="font-size:11.5px;font-weight:700;color:#3b556f">Full name (your signature)
+     <input id="ndaName" autocomplete="off" style="width:100%;margin-top:3px;padding:9px 11px;border:1px solid #b8c9d8;border-radius:8px;font-size:14px"></label>
+    <label style="font-size:11.5px;font-weight:700;color:#3b556f">Company / organisation
+     <input id="ndaCo" autocomplete="off" style="width:100%;margin-top:3px;padding:9px 11px;border:1px solid #b8c9d8;border-radius:8px;font-size:14px"></label>
+   </div>
+   <label style="display:flex;gap:9px;align-items:flex-start;margin-top:11px;font-size:12.5px;line-height:1.45;cursor:pointer">
+    <input type="checkbox" id="ndaOk" style="margin-top:2px;width:auto"> <span>I have read and understood this agreement. I agree to be bound by it, I will not copy, view the source of, or reproduce the system or its features, and I understand typing my name is my binding electronic signature.</span></label>
+   <div id="ndaErr" style="color:#b3261e;font-size:12px;min-height:16px;margin-top:6px"></div>
+   <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
+    <button id="ndaNo" type="button" style="padding:10px 18px;border-radius:9px;border:1px solid #b8c9d8;background:#fff;color:#14263b;font-weight:700;cursor:pointer">I do not agree</button>
+    <button id="ndaYes" type="button" style="padding:10px 22px;border-radius:9px;border:0;background:#2e5f7f;color:#fff;font-weight:800;cursor:pointer">I agree &amp; sign</button>
+   </div>
+  </div>
+ </div>
+</div>
+<script>
+/* ===== v251204 NDA GATE =====
+   CONFIDENTIAL - PROPRIETARY. Smart Service Desk. All rights reserved.
+   Unauthorised copying, extraction, reverse engineering or reuse of this code, design, workflows or features
+   is prohibited and is a breach of the Non-Disclosure Agreement accepted at the entrance. */
+(function(){
+  var VER='1.0', KEY='ssd_nda_v1';
+  function rec(){try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}}
+  function ok(){var r=rec();return !!(r&&r.ver===VER&&r.name&&r.accepted)}
+  window.__ndaOk=ok;
+  function logAll(r){try{var a=JSON.parse(localStorage.getItem(KEY+'_log')||'[]');a.push(r);localStorage.setItem(KEY+'_log',JSON.stringify(a.slice(-500)))}catch(e){}}
+  window.__ndaLog=function(){try{return JSON.parse(localStorage.getItem(KEY+'_log')||'[]')}catch(e){return[]}};
+  function show(){
+    var g=document.getElementById('ndaGate');if(!g)return;
+    g.style.display='flex';document.body.style.overflow='hidden';
+    var lv=document.getElementById('loginView');if(lv)lv.style.visibility='hidden';
+    var ap=document.getElementById('app');if(ap)ap.style.visibility='hidden';
+  }
+  function hide(){
+    var g=document.getElementById('ndaGate');if(g)g.style.display='none';document.body.style.overflow='';
+    var lv=document.getElementById('loginView');if(lv)lv.style.visibility='';
+    var ap=document.getElementById('app');if(ap)ap.style.visibility='';
+  }
+  function wire(){
+    var yes=document.getElementById('ndaYes'),no=document.getElementById('ndaNo');
+    if(!yes)return;
+    no.onclick=function(){
+      document.getElementById('ndaErr').textContent='Access is not possible without accepting the agreement. You can close this page.';
+    };
+    yes.onclick=function(){
+      var n=document.getElementById('ndaName').value.trim(),c=document.getElementById('ndaCo').value.trim(),k=document.getElementById('ndaOk').checked;
+      var e=document.getElementById('ndaErr');
+      if(n.split(/\s+/).length<2||n.length<5){e.textContent='Type your full name (first and last name) as your signature.';return}
+      if(c.length<2){e.textContent='Enter your company or organisation.';return}
+      if(!k){e.textContent='Tick the box to confirm you agree.';return}
+      var r={ver:VER,name:n,company:c,accepted:true,at:new Date().toISOString(),tz:(Intl.DateTimeFormat().resolvedOptions().timeZone||''),ua:navigator.userAgent.slice(0,180),screen:screen.width+'x'+screen.height,lang:navigator.language,page:location.href.split('#')[0]};
+      try{localStorage.setItem(KEY,JSON.stringify(r))}catch(x){}
+      logAll(r);hide();
+      var em=document.getElementById('loginEmail');if(em)try{em.focus()}catch(x){}
+    };
+  }
+  function start(){wire();if(!ok())show()}
+  window.__ndaShow=show;
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+
+  /* deterrents against casual copying of the live page (a legal notice is the real protection) */
+  document.addEventListener('contextmenu',function(e){if(!window.__ssdAllowCtx&&!/INPUT|TEXTAREA/.test((e.target||{}).tagName||''))e.preventDefault()});
+  document.addEventListener('keydown',function(e){
+    var k=(e.key||'').toLowerCase();
+    if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&/^[ijc]$/.test(k))||(e.ctrlKey&&k==='u')||(e.ctrlKey&&k==='s')){e.preventDefault();e.stopPropagation()}
+  },true);
+  document.addEventListener('dragstart',function(e){e.preventDefault()});
+  /* printing prints a confidentiality notice instead of the desk's screens only when NOT using the app's own report windows */
+})();
+</script>
+
 
 <div id="loginView">
   <button class="theme-fab" id="themeFab" onclick="toggleTheme()" title="Switch dark / light mode"></button>
@@ -2008,8 +2102,8 @@ tbody tr{transition:background .12s ease}
     <div class="field"><label>Email address</label><input id="loginEmail" placeholder="name@company.co.za" autocomplete="username" autofocus></div>
     <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="password" autocomplete="current-password"></div>
     <button class="btn-login" onclick="doLogin()">Sign in</button>
-    <div class="mock-note"><b>Prototype auth.</b> Sign in with your email address. Accounts are local demo users only; a production deployment must use backend authentication. Demo accounts: <b id="demoEmails"></b> - demo password: <b>demo1234</b>.</div>
-    <div class="login-foot">SECURE AGENT ACCESS · AUTHORISED STAFF ONLY · BUILD v240</div>
+    <div class="mock-note"><b>Confidential.</b> Authorised staff only. Access is covered by the Non-Disclosure Agreement you accepted. Ask your administrator for your sign-in details.<span id="demoEmails" style="display:none"></span></div>
+    <div class="login-foot">CONFIDENTIAL · PROPRIETARY · AUTHORISED STAFF ONLY · COVERED BY NDA · BUILD v251204</div>
   </div>
 </div>
 
@@ -2021,7 +2115,7 @@ tbody tr{transition:background .12s ease}
     </div>
     <nav class="sb-nav" id="nav"></nav>
     <div class="sb-foot" id="sbFoot"></div>
-  </aside>
+  <div style="padding:8px 12px 12px;font-size:10px;line-height:1.4;color:#7f96ad;border-top:1px solid rgba(255,255,255,.07)">CONFIDENTIAL &amp; PROPRIETARY. Covered by NDA. Do not copy, screenshot or share.</div></aside>
 <div id="sbBackdrop" onclick="closeSb()"></div>
 <nav class="mnav" id="mnav"></nav>
   <div id="main">
@@ -3413,6 +3507,7 @@ function loadDashFrom(d){try{const known=DASH_DEFAULT.order;
   DASH.order=(d.order||[]).filter(k=>known.includes(k));known.forEach(k=>{if(!DASH.order.includes(k))DASH.order.push(k)});
   DASH.hidden=(d.hidden||[]).filter(k=>known.includes(k));DASH.kpiHidden=d.kpiHidden||[];saveDash()}catch(e){}}
 function doLogin(){
+  if(window.__ndaOk&&!window.__ndaOk()){if(window.__ndaShow)window.__ndaShow();return}
   const em=document.getElementById('loginEmail').value.trim().toLowerCase();
   const p=document.getElementById('loginPass').value;
   if(!em||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){toast('Enter your email address to sign in.',1);return}
@@ -7803,6 +7898,42 @@ function trimToLatest(n){
   save();render();
   toast('Desk now holds '+keep.length+' calls. '+rest.length+' older calls archived and restorable with Ctrl+Z.');
 }
+
+function ndaRegisterCard(){
+  var log=(window.__ndaLog?window.__ndaLog():[]).slice().reverse();
+  var me=null;try{me=JSON.parse(localStorage.getItem('ssd_nda_v1'))}catch(e){}
+  return `<div class="card" style="margin-top:14px"><h3>${ic('shield')} Non-Disclosure Agreement register</h3>
+  <div class="banner info">${ic('shield')} Everyone who opens this desk must read and sign the NDA before the sign-in page unlocks. Each signature is recorded below on this browser: name, company, date and time, agreement version and device details. The NDA is a legal protection for the system, its code and its features. It does not replace keeping the link, the logins and the files private.</div>
+  <div class="sub" style="margin:8px 0">Signed on this browser: <b>${me&&me.name?esc(me.name)+' ('+esc(me.company||'')+') on '+esc(fmtDT(me.at)):'not signed'}</b> &middot; ${log.length} signature${log.length===1?'':'s'} recorded here</div>
+  <div class="flexline" style="gap:8px;margin:8px 0">
+    <button class="btn btn-primary" onclick="ndaDownloadCsv()">${ic('note')} Download register (CSV)</button>
+    <button class="btn btn-ghost" onclick="ndaPrint()">${ic('clip')} Print agreement</button>
+    <button class="btn btn-ghost" onclick="ndaResign()">${ic('refresh')} Require signing again on this browser</button>
+  </div>
+  <div style="overflow:auto;max-height:260px"><table class="tbl"><thead><tr><th>Signed</th><th>Name</th><th>Company</th><th>Version</th><th>Time zone</th><th>Device</th></tr></thead><tbody>
+  ${log.map(r=>`<tr><td>${esc(fmtDT(r.at))}</td><td>${esc(r.name)}</td><td>${esc(r.company)}</td><td>${esc(r.ver)}</td><td>${esc(r.tz||'')}</td><td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.ua||'')}">${esc((r.ua||'').slice(0,60))}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">No signatures recorded on this browser yet.</td></tr>'}
+  </tbody></table></div></div>`;
+}
+function ndaDownloadCsv(){
+  var log=window.__ndaLog?window.__ndaLog():[];
+  var q=function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'};
+  var rows=[['Signed at','Name','Company','Version','Time zone','Language','Screen','Device','Page']].concat(log.map(function(r){return [r.at,r.name,r.company,r.ver,r.tz,r.lang,r.screen,r.ua,r.page]}));
+  var blob=new Blob([rows.map(function(r){return r.map(q).join(',')}).join('\r\n')],{type:'text/csv'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ssd-nda-register.csv';document.body.appendChild(a);a.click();setTimeout(function(){a.remove()},500);
+  toast('NDA register downloaded.');
+}
+function ndaPrint(){
+  var t=document.getElementById('ndaText');
+  var w=window.open('','_blank');if(!w){toast('Allow pop-ups to print the agreement.',1);return}
+  w.document.write('<html><head><title>Smart Service Desk NDA</title><style>body{font-family:Arial,sans-serif;max-width:760px;margin:30px auto;line-height:1.6;font-size:13px;color:#111}h1{font-size:20px}</style></head><body><h1>Non-Disclosure &amp; Confidentiality Agreement - Smart Service Desk</h1>'+(t?t.innerHTML:'')+'<hr><p>Name: ______________________ &nbsp; Company: ______________________</p><p>Signature: ______________________ &nbsp; Date: ______________</p></body></html>');
+  w.document.close();setTimeout(function(){w.print()},400);
+}
+function ndaResign(){
+  try{localStorage.removeItem('ssd_nda_v1')}catch(e){}
+  toast('This browser will ask for the NDA again. Signing out now.');
+  setTimeout(function(){doLogout();if(window.__ndaShow)window.__ndaShow()},600);
+}
+
 function callHistoryCard(){
   if(!isAdmin())return '';
   const live=(DB.tickets||[]).length, arch=(DB.archive||[]).length;
@@ -10387,6 +10518,7 @@ function vSettings(){
     <div class="flexline" style="margin-top:10px;gap:8px"><button class="btn" onclick="syncPull(false)">Refresh from the shared desk</button><button class="btn" onclick="loadOlderTickets()">Load 200 older tickets</button><button class="btn" onclick="raiseSeats()">Seat limit</button><span class="sub" style="font-size:11px">${seatsUsed()} of ${seatLimit()} seats - ${DB.tickets.length} tickets held in this browser</span></div>
     <div class="notice-samples" style="margin-top:8px"><b id="syncStatus">${c.syncOn?'Central desk ON':'Central desk off - this browser keeps its own copy.'}</b></div>
     <div class="notice-samples">First-time setup: on ONE machine switch sync on and <b>Push this desk to central</b>. On every other machine enter the same endpoint and team key, then <b>Pull central desk here</b>. Merge is per-record: agents editing different calls never overwrite each other.</div></div>
+    ${isAdmin()?ndaRegisterCard():''}
     ${callHistoryCard()}
   <div class="card"><h3>${ic('shield')}SLA policies (hours) - editable</h3>
     <div class="tbl-wrap"><table><thead><tr><th>Priority</th><th>Name</th><th>Response target (h)</th><th>Resolution target (h)</th></tr></thead><tbody>
