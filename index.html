@@ -1980,15 +1980,59 @@ tbody tr{transition:background .12s ease}
 </style>
 </head>
 <body>
-<div id="ndaGate" style="position:fixed;inset:0;z-index:99999;background:#0b1a2c;display:none;align-items:center;justify-content:center;padding:16px;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
- <div style="background:#fff;color:#14263b;width:760px;max-width:100%;max-height:96vh;border-radius:18px;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,.55);overflow:hidden">
-  <div style="padding:20px 26px 14px;border-bottom:1px solid #dbe5ee;background:linear-gradient(135deg,#122640,#2e5f7f);color:#fff">
-   <div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;opacity:.8">Confidential &middot; Restricted access</div>
-   <div style="font-size:21px;font-weight:800;margin-top:4px">Non-Disclosure &amp; Confidentiality Agreement</div>
-   <div style="font-size:12.5px;opacity:.85;margin-top:3px">Smart Service Desk &middot; you must read and accept this agreement before the system will open</div>
+<style>
+#ndaGate{position:fixed;inset:0;z-index:99999;background:#0b1a2c;display:none;align-items:center;justify-content:center;padding:12px;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:auto;-webkit-overflow-scrolling:touch}
+#ndaGate *{box-sizing:border-box}
+#ndaGate .nda-card{background:#fff;color:#14263b;width:760px;max-width:100%;max-height:calc(100dvh - 24px);max-height:calc(100vh - 24px);border-radius:18px;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,.55);overflow:hidden}
+@supports(height:100dvh){#ndaGate .nda-card{max-height:calc(100dvh - 24px)}}
+#ndaGate .nda-head{padding:18px 24px 12px;border-bottom:1px solid #dbe5ee;background:linear-gradient(135deg,#122640,#2e5f7f);color:#fff;flex:0 0 auto}
+#ndaGate .nda-k{font-size:11px;letter-spacing:.16em;text-transform:uppercase;opacity:.8}
+#ndaGate .nda-t{font-size:21px;font-weight:800;margin-top:4px;line-height:1.2}
+#ndaGate .nda-s{font-size:12.5px;opacity:.85;margin-top:3px}
+#ndaGate #ndaText{padding:16px 24px;overflow:auto;font-size:13px;line-height:1.65;flex:1 1 auto;min-height:60px;-webkit-overflow-scrolling:touch}
+#ndaGate #ndaText p{margin:0 0 10px}
+#ndaGate .nda-foot{padding:12px 24px 16px;border-top:1px solid #dbe5ee;background:#f4f8fb;flex:0 0 auto;overflow:auto;max-height:55%}
+#ndaGate .nda-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end}
+#ndaGate .nda-f{display:flex;flex-direction:column;gap:5px;font-size:11.5px;font-weight:700;color:#3b556f;min-width:0}
+#ndaGate .nda-f input[type=text]{display:block;width:100%;height:42px;margin:0;padding:0 12px;border:1px solid #b8c9d8;border-radius:8px;font:inherit;font-size:15px;font-weight:500;color:#14263b;background:#fff;line-height:42px;-webkit-appearance:none;appearance:none}
+#ndaGate .nda-f input[type=text]:focus{outline:2px solid #2e5f7f;outline-offset:1px;border-color:#2e5f7f}
+#ndaGate .nda-chk{display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-size:12.5px;line-height:1.45;cursor:pointer}
+#ndaGate .nda-chk input{flex:0 0 22px;width:22px;height:22px;margin:0;accent-color:#2e5f7f}
+#ndaGate #ndaErr{color:#b3261e;font-size:12.5px;min-height:18px;margin-top:6px;font-weight:600}
+#ndaGate .nda-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
+#ndaGate .nda-btns button{height:44px;padding:0 20px;border-radius:9px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;touch-action:manipulation}
+#ndaGate #ndaNo{border:1px solid #b8c9d8;background:#fff;color:#14263b}
+#ndaGate #ndaYes{border:0;background:#2e5f7f;color:#fff}
+@media (max-width:560px){
+ #ndaGate{padding:0;align-items:stretch}
+ #ndaGate .nda-card{max-height:none;height:100%;border-radius:0}
+ #ndaGate .nda-head{padding:12px 16px 10px}
+ #ndaGate .nda-t{font-size:17px}
+ #ndaGate .nda-s{display:none}
+ #ndaGate #ndaText{padding:12px 16px;font-size:12.5px}
+ #ndaGate .nda-foot{padding:10px 16px 14px;max-height:none}
+ #ndaGate .nda-grid{grid-template-columns:1fr;gap:10px}
+ #ndaGate .nda-btns button{flex:1}
+}
+@media (max-height:480px){
+ #ndaGate .nda-head{padding:8px 16px}
+ #ndaGate .nda-k,#ndaGate .nda-s{display:none}
+ #ndaGate .nda-t{font-size:15px;margin:0}
+ #ndaGate #ndaText{min-height:0}
+ #ndaGate .nda-grid{grid-template-columns:1fr 1fr}
+ #ndaGate .nda-foot{padding:8px 16px 10px}
+ #ndaGate .nda-chk{margin-top:8px}
+}
+</style>
+<div id="ndaGate">
+ <div class="nda-card">
+  <div class="nda-head">
+   <div class="nda-k">Confidential &middot; Restricted access</div>
+   <div class="nda-t">Non-Disclosure &amp; Confidentiality Agreement</div>
+   <div class="nda-s">Smart Service Desk &middot; you must read and accept this agreement before the system will open</div>
   </div>
-  <div id="ndaText" style="padding:18px 26px;overflow:auto;font-size:13px;line-height:1.65;flex:1;min-height:120px">
-   <p><b>1. Parties.</b> This agreement is between the owner and developer of the Smart Service Desk (the &ldquo;Owner&rdquo;) and the person accessing it (the &ldquo;Recipient&rdquo;), who signs it personally and, where applicable, on behalf of the company or organisation they represent.</p>
+  <div id="ndaText">
+<p><b>1. Parties.</b> This agreement is between the owner and developer of the Smart Service Desk (the &ldquo;Owner&rdquo;) and the person accessing it (the &ldquo;Recipient&rdquo;), who signs it personally and, where applicable, on behalf of the company or organisation they represent.</p>
    <p><b>2. Confidential Information.</b> Everything you see, open or use in the Smart Service Desk is confidential. This includes, without limit: the software, source code, page structure, design, layout, workflows, features, screens, reports, SLA and escalation logic, scoring and clustering methods, data models, integrations, the Operations Pack, remote-viewer and bridge designs, documentation, demo data, store and estate information, ticket and call content, provider and supplier details, pricing, and any idea, method or know-how revealed through the system. It applies whether you saw it in the browser, in screenshots or recordings, in the page source, or were told about it.</p>
    <p><b>3. Permitted use.</b> You may use the system only for the evaluation or business purpose for which the Owner gave you access, and only yourself.</p>
    <p><b>4. What you must not do.</b> You must not: (a) copy, save, download, scrape, mirror, host, republish or redistribute the system or any part of it; (b) view, extract, decompile, reverse engineer or analyse the source code, scripts, styles or data in order to reproduce it; (c) build, commission or assist any product, service, tender, proposal or competing system that copies or is derived from its features, workflows, screens or ideas; (d) take screenshots, screen recordings or photographs, or describe the system, for anyone outside your own authorised team; (e) share links, logins or access with any other person; (f) remove or alter any confidentiality, copyright or ownership notice; (g) use any information in it to compete with the Owner or to solicit the Owner&rsquo;s clients.</p>
@@ -2001,19 +2045,18 @@ tbody tr{transition:background .12s ease}
    <p><b>11. Law.</b> This agreement is governed by the laws of the Republic of South Africa. You consent to the jurisdiction of the High Court of South Africa. Typing your name and accepting below is your electronic signature and is binding under the Electronic Communications and Transactions Act, 25 of 2002.</p>
    <p style="font-size:11.5px;color:#5a6f84">Agreement version 1.0. If you do not agree, close this page now and do not use the system.</p>
   </div>
-  <div style="padding:14px 26px 18px;border-top:1px solid #dbe5ee;background:#f4f8fb">
-   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <label style="font-size:11.5px;font-weight:700;color:#3b556f">Full name (your signature)
-     <input id="ndaName" autocomplete="off" style="width:100%;margin-top:3px;padding:9px 11px;border:1px solid #b8c9d8;border-radius:8px;font-size:14px"></label>
-    <label style="font-size:11.5px;font-weight:700;color:#3b556f">Company / organisation
-     <input id="ndaCo" autocomplete="off" style="width:100%;margin-top:3px;padding:9px 11px;border:1px solid #b8c9d8;border-radius:8px;font-size:14px"></label>
+  <div class="nda-foot">
+   <div class="nda-grid">
+    <label class="nda-f">Full name (your signature)
+     <input type="text" id="ndaName" autocomplete="name" autocapitalize="words" enterkeyhint="next"></label>
+    <label class="nda-f">Company / organisation
+     <input type="text" id="ndaCo" autocomplete="organization" enterkeyhint="done"></label>
    </div>
-   <label style="display:flex;gap:9px;align-items:flex-start;margin-top:11px;font-size:12.5px;line-height:1.45;cursor:pointer">
-    <input type="checkbox" id="ndaOk" style="margin-top:2px;width:auto"> <span>I have read and understood this agreement. I agree to be bound by it, I will not copy, view the source of, or reproduce the system or its features, and I understand typing my name is my binding electronic signature.</span></label>
-   <div id="ndaErr" style="color:#b3261e;font-size:12px;min-height:16px;margin-top:6px"></div>
-   <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
-    <button id="ndaNo" type="button" style="padding:10px 18px;border-radius:9px;border:1px solid #b8c9d8;background:#fff;color:#14263b;font-weight:700;cursor:pointer">I do not agree</button>
-    <button id="ndaYes" type="button" style="padding:10px 22px;border-radius:9px;border:0;background:#2e5f7f;color:#fff;font-weight:800;cursor:pointer">I agree &amp; sign</button>
+   <label class="nda-chk"><input type="checkbox" id="ndaOk"> <span>I have read and understood this agreement. I agree to be bound by it, I will not copy, view the source of, or reproduce the system or its features, and I understand typing my name is my binding electronic signature.</span></label>
+   <div id="ndaErr" role="alert"></div>
+   <div class="nda-btns">
+    <button id="ndaNo" type="button">I do not agree</button>
+    <button id="ndaYes" type="button">I agree &amp; sign</button>
    </div>
   </div>
  </div>
@@ -2051,8 +2094,8 @@ tbody tr{transition:background .12s ease}
     yes.onclick=function(){
       var n=document.getElementById('ndaName').value.trim(),c=document.getElementById('ndaCo').value.trim(),k=document.getElementById('ndaOk').checked;
       var e=document.getElementById('ndaErr');
-      if(n.split(/\s+/).length<2||n.length<5){e.textContent='Type your full name (first and last name) as your signature.';return}
-      if(c.length<2){e.textContent='Enter your company or organisation.';return}
+      if(n.length<3){e.textContent='Type your name as your signature.';return}
+      if(c.length<1){e.textContent='Enter your company or organisation.';return}
       if(!k){e.textContent='Tick the box to confirm you agree.';return}
       var r={ver:VER,name:n,company:c,accepted:true,at:new Date().toISOString(),tz:(Intl.DateTimeFormat().resolvedOptions().timeZone||''),ua:navigator.userAgent.slice(0,180),screen:screen.width+'x'+screen.height,lang:navigator.language,page:location.href.split('#')[0]};
       MEM=r;try{localStorage.setItem(KEY,JSON.stringify(r))}catch(x){}
@@ -2060,7 +2103,12 @@ tbody tr{transition:background .12s ease}
       var em=document.getElementById('loginEmail');if(em)try{em.focus()}catch(x){}
     };
   }
-  function start(){wire();if(!ok())show()}
+  function start(){wire();
+    var co=document.getElementById('ndaCo'),nm=document.getElementById('ndaName');
+    if(co)co.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();document.getElementById('ndaYes').click()}});
+    if(nm)nm.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();co&&co.focus()}});
+    ['ndaName','ndaCo'].forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('focus',function(){setTimeout(function(){try{el.scrollIntoView({block:'center'})}catch(x){}},300)})});
+    if(!ok())show()}
   window.__ndaShow=show;
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 
@@ -2104,7 +2152,7 @@ tbody tr{transition:background .12s ease}
     <div class="field"><label>Password</label><input type="password" id="loginPass" placeholder="password" autocomplete="current-password"></div>
     <button class="btn-login" onclick="doLogin()">Sign in</button>
     <div class="mock-note"><b>Confidential.</b> Authorised staff only. Access is covered by the Non-Disclosure Agreement you accepted. Ask your administrator for your sign-in details.<span id="demoEmails" style="display:none"></span></div>
-    <div class="login-foot">CONFIDENTIAL · PROPRIETARY · AUTHORISED STAFF ONLY · COVERED BY NDA · BUILD v251205</div>
+    <div class="login-foot">CONFIDENTIAL · PROPRIETARY · AUTHORISED STAFF ONLY · COVERED BY NDA · BUILD v251206</div>
   </div>
 </div>
 
